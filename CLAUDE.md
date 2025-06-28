@@ -16,15 +16,19 @@ This is a full-stack data breach management system with:
 - **Frontend**: Angular 20 application (`breach-viewer/`)
 
 ## C# preferences
+- If an .gitignore file does not exist, add one 
 - Use Flurl.http for making REST API calls
 - Use Mediatr with CQRS
 - Prefer Global exception handlers
 - Use Microsoft.Extensions.Logging for logging
 - Use Handlebars.net for converting json to html
 - Use Puppetter for html to pdf conversion
-- Add tests
+- Add tests and use nsubstitute for mocking
+- Do not use any nuget packages which require commercial license (like FluentAssertions)
 
 
 ## Angular preferences
+- If an .gitignore file does not exist, add one 
 - Use industry best practices for Angular usage
 - Make the angular app response with a modern look and feed
+
