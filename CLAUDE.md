@@ -22,6 +22,7 @@ This is a full-stack data breach management system with:
 - Use Microsoft.Extensions.Logging for logging
 - Use Handlebars.net for converting json to html
 - Use Puppetter for html to pdf conversion
+- Add tests
 
 
 ## Angular preferences
