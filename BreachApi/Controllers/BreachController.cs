@@ -1,6 +1,5 @@
 using BreachApi.Models;
-using BreachApi.Queries;
-using MediatR;
+using BreachApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BreachApi.Controllers;
@@ -9,12 +8,20 @@ namespace BreachApi.Controllers;
 [Route("api/[controller]")]
 public class BreachController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly IHaveIBeenPwnedService _breachService;
+    private readonly IPdfService _pdfService;
+    private readonly IAiRiskAnalysisService _aiService;
     private readonly ILogger<BreachController> _logger;
 
-    public BreachController(IMediator mediator, ILogger<BreachController> logger)
+    public BreachController(
+        IHaveIBeenPwnedService breachService,
+        IPdfService pdfService,
+        IAiRiskAnalysisService aiService,
+        ILogger<BreachController> logger)
     {
-        _mediator = mediator;
+        _breachService = breachService;
+        _pdfService = pdfService;
+        _aiService = aiService;
         _logger = logger;
     }
 
@@ -29,9 +36,7 @@ public class BreachController : ControllerBase
         _logger.LogInformation("GetBreaches endpoint called with From: {From}, To: {To}", 
             request.From, request.To);
 
-        var query = new GetBreachesQuery(request.From, request.To);
-        var breaches = await _mediator.Send(query);
-
+        var breaches = await _breachService.GetBreachesAsync(request.From, request.To);
         return Ok(breaches);
     }
 
@@ -46,11 +51,10 @@ public class BreachController : ControllerBase
         _logger.LogInformation("GetBreachesPdf endpoint called with From: {From}, To: {To}", 
             request.From, request.To);
 
-        var query = new GetBreachesPdfQuery(request.From, request.To);
-        var pdfBytes = await _mediator.Send(query);
+        var breaches = await _breachService.GetBreachesAsync(request.From, request.To);
+        var pdfBytes = await _pdfService.GeneratePdfAsync(breaches);
 
         var fileName = $"breach-report-{DateTime.UtcNow:yyyy-MM-dd-HHmmss}.pdf";
-        
         return File(pdfBytes, "application/pdf", fileName);
     }
 
@@ -69,9 +73,18 @@ public class BreachController : ControllerBase
             return BadRequest("Breach name is required");
         }
 
-        var query = new GetAiRiskSummaryQuery { BreachName = breachName };
-        var riskSummary = await _mediator.Send(query);
+        // Get the specific breach efficiently
+        var breaches = await _breachService.GetBreachesAsync(null, null);
+        var targetBreach = breaches.FirstOrDefault(b => 
+            string.Equals(b.Name, breachName, StringComparison.OrdinalIgnoreCase));
 
+        if (targetBreach == null)
+        {
+            _logger.LogWarning("Breach not found: {BreachName}", breachName);
+            return NotFound($"Breach '{breachName}' not found");
+        }
+
+        var riskSummary = await _aiService.GenerateRiskSummaryAsync(targetBreach);
         return Ok(riskSummary);
     }
 }
