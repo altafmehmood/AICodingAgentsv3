@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
@@ -25,6 +25,7 @@ interface BreachDetailState {
 @Component({
   selector: 'app-breach-detail',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     MatCardModule,
@@ -154,7 +155,7 @@ interface BreachDetailState {
   styles: [`
     .container {
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       padding: 1rem;
     }
     
@@ -168,29 +169,29 @@ interface BreachDetailState {
     }
     
     .back-button {
-      color: white;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
+      color: #0f172a;
+      background: white;
+      border-radius: 6px;
       padding: 0.75rem 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
       font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
     
     .back-button:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      background: #f8fafc;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e1;
     }
     
     .breach-card {
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       overflow: hidden;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid #e2e8f0;
     }
     
     .breach-avatar {
@@ -201,9 +202,9 @@ interface BreachDetailState {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
-      border: 3px solid #e0e7ff;
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
     
     .breach-avatar img {
@@ -214,17 +215,17 @@ interface BreachDetailState {
     
     .breach-avatar mat-icon {
       font-size: 40px;
-      color: #6366f1;
+      color: #0f172a;
     }
     
     .breach-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
+      gap: 1.5rem;
       margin: 2rem 0;
-      padding: 2rem;
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      border-radius: 16px;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 8px;
       border: 1px solid #e2e8f0;
     }
     
@@ -232,17 +233,17 @@ interface BreachDetailState {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-      padding: 1.5rem;
+      padding: 1.25rem;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
       border: 1px solid #f1f5f9;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     
     .stat:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     
     .label {
@@ -456,11 +457,11 @@ interface BreachDetailState {
     }
     
     .verified {
-      color: #10b981;
+      color: #059669;
     }
     
     .unverified {
-      color: #ef4444;
+      color: #dc2626;
     }
     
     /* Responsive Design */

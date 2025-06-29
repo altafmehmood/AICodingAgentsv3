@@ -206,11 +206,11 @@ src/app/
 ## 🎨 UI/UX Guidelines
 
 ### Design System
-- **Color Palette**: Purple gradients (#667eea to #764ba2) with modern grays
-- **Typography**: Inter font family with proper weight hierarchy (300-800)
+- **Color Palette**: Professional slate/gray palette (#0f172a, #1e293b, #334155) with clean whites and subtle grays
+- **Typography**: Inter font family with proper weight hierarchy (400-600)
 - **Spacing**: 8px base unit with consistent scale (0.5rem, 1rem, 1.5rem, 2rem)
-- **Border Radius**: 8px (small), 12px (medium), 16px (large), 20px (cards)
-- **Shadows**: Layered shadows with rgba(0,0,0,0.1) for depth
+- **Border Radius**: 6px (small), 8px (medium), consistent professional appearance
+- **Shadows**: Subtle shadows with rgba(0,0,0,0.04-0.12) for professional depth
 
 ### Responsive Design
 - **Mobile First**: Design for 320px and scale up

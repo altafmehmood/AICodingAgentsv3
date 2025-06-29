@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { retry, catchError, delay, mergeMap } from 'rxjs/operators';
+import { timer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Breach, DateRangeParams } from '../models';
 
@@ -23,7 +25,9 @@ export class BreachApiService {
       httpParams = httpParams.set('to', params.to);
     }
 
-    return this.http.get<Breach[]>(`${this.baseUrl}/breach`, { params: httpParams });
+    return this.http.get<Breach[]>(`${this.baseUrl}/breach`, { params: httpParams }).pipe(
+      retry({ count: 3, delay: (error, retryCount) => timer(Math.pow(2, retryCount) * 1000) })
+    );
   }
 
   downloadPdf(params?: DateRangeParams): Observable<Blob> {

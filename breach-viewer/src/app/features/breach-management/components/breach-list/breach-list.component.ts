@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, startWith, switchMap, catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -27,6 +27,7 @@ interface BreachListState {
 @Component({
   selector: 'app-breach-list',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     AsyncPipe,
@@ -61,7 +62,8 @@ interface BreachListState {
               <p>Try adjusting your date range filter.</p>
             </div>
             
-            <table mat-table [dataSource]="state.breaches" matSort *ngIf="state.breaches.length > 0" class="breach-table">
+            <table mat-table [dataSource]="state.breaches" matSort *ngIf="state.breaches.length > 0" class="breach-table" 
+                   role="table" aria-label="Data breaches table" [attr.aria-rowcount]="state.breaches.length + 1">
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
                 <td mat-cell *matCellDef="let breach" data-label="Name"> {{breach.title}} </td>
@@ -94,7 +96,8 @@ interface BreachListState {
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let breach" data-label="Actions">
-                  <button mat-button color="primary" (click)="onViewDetails(breach)">
+                  <button mat-button color="primary" (click)="onViewDetails(breach)" 
+                          [attr.aria-label]="'View details for ' + breach.title">
                     <mat-icon>visibility</mat-icon>
                     View Details
                   </button>
@@ -102,7 +105,9 @@ interface BreachListState {
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onViewDetails(row)" class="clickable-row"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackByBreach" 
+                  (click)="onViewDetails(row)" (keydown.enter)="onViewDetails(row)" (keydown.space)="onViewDetails(row)"
+                  class="clickable-row" tabindex="0" role="button" [attr.aria-label]="'View details for ' + row.title"></tr>
             </table>
           </div>
         </ng-container>
@@ -112,7 +117,7 @@ interface BreachListState {
   styles: [`
     .container {
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       padding: 1rem;
     }
     
@@ -124,10 +129,10 @@ interface BreachListState {
     .breach-table-container {
       margin-top: 2rem;
       background: white;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      border: 1px solid #e2e8f0;
     }
     
     .breach-table {
@@ -137,14 +142,14 @@ interface BreachListState {
     
     .clickable-row {
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f1f5f9;
     }
     
     .clickable-row:hover {
-      background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      background: #f8fafc;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     
     .clickable-row:last-child {
@@ -170,22 +175,22 @@ interface BreachListState {
     }
     
     .verified {
-      color: #10b981;
+      color: #059669;
     }
     
     .unverified {
-      color: #ef4444;
+      color: #dc2626;
     }
     
     mat-header-cell {
-      font-weight: 700;
-      color: #1f2937;
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      padding: 1.5rem 1rem;
+      font-weight: 600;
+      color: #475569;
+      background: #f8fafc;
+      padding: 1.25rem 1rem;
       font-size: 0.875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-bottom: 2px solid #e2e8f0;
+      text-transform: none;
+      letter-spacing: 0.01em;
+      border-bottom: 1px solid #e2e8f0;
     }
     
     mat-cell {
@@ -202,18 +207,19 @@ interface BreachListState {
     }
     
     button[mat-button] {
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 0.5rem 1rem;
       font-weight: 500;
-      transition: all 0.3s ease;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      transition: all 0.2s ease;
+      background: #0f172a;
       color: white;
       border: none;
     }
     
     button[mat-button]:hover {
       transform: translateY(-1px);
-      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+      background: #1e293b;
     }
     
     /* Responsive Design */
@@ -224,7 +230,7 @@ interface BreachListState {
       
       .breach-table-container {
         margin-top: 1.5rem;
-        border-radius: 12px;
+        border-radius: 8px;
       }
       
       mat-header-cell,
@@ -244,8 +250,8 @@ interface BreachListState {
       
       .breach-table-container {
         margin-top: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       }
       
       .displayedColumns {
@@ -382,5 +388,9 @@ export class BreachListComponent implements OnInit, OnDestroy {
 
   private loadBreaches(): void {
     this.filterSubject.next({});
+  }
+
+  trackByBreach(index: number, breach: Breach): string {
+    return breach.name || breach.title;
   }
 }

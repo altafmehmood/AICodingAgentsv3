@@ -56,6 +56,8 @@ import { DateRangeParams } from '../../../core/models';
   styles: [`
     .filter-card {
       margin-bottom: 1rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
     
     .date-range-form {
@@ -68,6 +70,32 @@ import { DateRangeParams } from '../../../core/models';
       display: flex;
       gap: 1rem;
       margin-top: 1rem;
+    }
+    
+    .button-group button[mat-raised-button] {
+      background: #0f172a;
+      color: white;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .button-group button[mat-raised-button]:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+    }
+    
+    .button-group button[mat-button] {
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    
+    .button-group button[mat-button]:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
     }
     
     @media (min-width: 768px) {
