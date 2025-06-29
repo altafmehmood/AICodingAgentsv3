@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a full-stack data breach management system with:
 - The BreachAPI exposes 2 api endpoints, both of which accept optional from and to dates. 
 - There is a BreachApi.Tests xUnit test Project
-- There is a Breach.sln solution file, which includes BreachApi and BreachApi.Tests
+- Organize all the .net code into a solution file
 - The api calls https://haveibeenpwned.com/api/v3/breaches to retrieve a list of breaches, and applies filtering and orders by date descending.
 - The angular app creates an user interface for exposing these 2 API's via an UI to the end user.
 - **Backend**: .NET 9.0 ASP.NET Core Web API (`BreachApi/`)
