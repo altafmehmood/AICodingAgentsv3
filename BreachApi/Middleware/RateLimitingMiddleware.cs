@@ -47,8 +47,8 @@ public class RateLimitingMiddleware
         _cache.Set(cacheKey, requestCount + 1, _timeWindow);
 
         // Add rate limit headers
-        context.Response.Headers.Add("X-RateLimit-Limit", _maxRequestsPerMinute.ToString());
-        context.Response.Headers.Add("X-RateLimit-Remaining", (_maxRequestsPerMinute - requestCount - 1).ToString());
+        context.Response.Headers["X-RateLimit-Limit"] = _maxRequestsPerMinute.ToString();
+        context.Response.Headers["X-RateLimit-Remaining"] = (_maxRequestsPerMinute - requestCount - 1).ToString();
 
         await _next(context);
     }

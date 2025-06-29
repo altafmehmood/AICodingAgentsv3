@@ -10,16 +10,19 @@ public class AiRiskAnalysisService : IAiRiskAnalysisService
     private readonly IClaudeConfigurationService _configService;
     private readonly IDistributedCache _cache;
     private readonly ILogger<AiRiskAnalysisService> _logger;
+    private readonly IConfiguration _configuration;
     private readonly JsonSerializerOptions _jsonOptions;
 
     public AiRiskAnalysisService(
         IClaudeConfigurationService configService,
         IDistributedCache cache,
-        ILogger<AiRiskAnalysisService> logger)
+        ILogger<AiRiskAnalysisService> logger,
+        IConfiguration configuration)
     {
         _configService = configService;
         _cache = cache;
         _logger = logger;
+        _configuration = configuration;
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -191,13 +194,18 @@ Focus on actionable insights and measurable business impact. Consider the number
     {
         try
         {
+            var cacheExpirationHours = _configuration.GetValue<int>("Redis:CacheExpirationHours", 24);
             var cacheOptions = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(cacheExpirationHours),
+                SlidingExpiration = TimeSpan.FromHours(cacheExpirationHours / 4) // Refresh cache if accessed within 1/4 of expiration time
             };
             
             var serializedSummary = JsonSerializer.Serialize(summary, _jsonOptions);
             await _cache.SetStringAsync(cacheKey, serializedSummary, cacheOptions);
+            
+            _logger.LogDebug("Cached AI risk summary for key: {CacheKey}, expires in {Hours} hours", 
+                cacheKey, cacheExpirationHours);
         }
         catch (Exception ex)
         {

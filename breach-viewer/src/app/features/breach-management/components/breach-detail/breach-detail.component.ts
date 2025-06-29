@@ -84,7 +84,7 @@ interface BreachDetailState {
                   <div class="stat">
                     <span class="label">Status:</span>
                     <span class="value">
-                      <mat-icon [class.verified]="state.breach.isVerified" [class.unverified]="!state.breach.isVerified">
+                      <mat-icon [color]="state.breach.isVerified ? 'primary' : 'warn'">
                         {{ state.breach.isVerified ? 'check_circle' : 'cancel' }}
                       </mat-icon>
                       {{ state.breach.isVerified ? 'Verified' : 'Unverified' }}
@@ -279,13 +279,7 @@ interface BreachDetailState {
       padding: 16px;
     }
     
-    .verified {
-      color: #4caf50;
-    }
-    
-    .unverified {
-      color: #f44336;
-    }
+
     
     @media (max-width: 768px) {
       .container {

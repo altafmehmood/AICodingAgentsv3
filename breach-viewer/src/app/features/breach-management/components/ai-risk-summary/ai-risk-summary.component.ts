@@ -28,21 +28,21 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
           <mat-icon>psychology</mat-icon>
           AI Risk Analysis
           @if (riskSummary()?.isFromCache) {
-            <mat-icon class="cache-icon" [title]="'Cached result from ' + formatDate(riskSummary()?.generatedAt || '')">cached</mat-icon>
+            <mat-icon class="cache-icon" [title]="'Cached result from ' + getRelativeTime(riskSummary()?.generatedAt || '')">cached</mat-icon>
           }
         </mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
         @if (loading()) {
-          <div class="flex justify-center items-center py-8">
+          <div class="loading-container">
             <mat-spinner diameter="40"></mat-spinner>
-            <span class="ml-3">Generating AI risk analysis...</span>
+            <span>Generating AI risk analysis...</span>
           </div>
         } @else if (error()) {
-          <div class="error-state p-4 text-center">
-            <mat-icon class="error-icon">error</mat-icon>
-            <p class="mt-2 text-red-600">{{ error() }}</p>
+          <div class="error-state">
+            <mat-icon class="error-icon" color="warn">error</mat-icon>
+            <p>{{ error() }}</p>
             <button mat-stroked-button color="primary" (click)="loadAiSummary()">
               <mat-icon>refresh</mat-icon>
               Retry Analysis
@@ -51,9 +51,9 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
         } @else if (riskSummary()) {
           <div class="risk-summary">
             <!-- Risk Level Badge -->
-            <div class="risk-level-section mb-4">
+            <div class="risk-level-section">
               <mat-chip-set>
-                <mat-chip [class]="getRiskLevelClass(riskSummary()!.riskLevel)">
+                <mat-chip color="warn" selected>
                   <mat-icon matChipAvatar>{{ getRiskLevelIcon(riskSummary()!.riskLevel) }}</mat-icon>
                   {{ getRiskLevelText(riskSummary()!.riskLevel) }} Risk
                 </mat-chip>
@@ -61,9 +61,9 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
             </div>
 
             <!-- Executive Summary -->
-            <div class="executive-summary mb-4">
-              <h3 class="text-lg font-semibold mb-2">Executive Summary</h3>
-              <p class="text-gray-700">{{ riskSummary()!.executiveSummary }}</p>
+            <div class="executive-summary">
+              <h3>Executive Summary</h3>
+              <p>{{ riskSummary()!.executiveSummary }}</p>
             </div>
 
             <!-- Expandable Sections -->
@@ -89,8 +89,8 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
                 </mat-expansion-panel-header>
                 <ul class="action-list">
                   @for (action of riskSummary()!.recommendedActions; track action) {
-                    <li class="flex items-start gap-2 mb-2">
-                      <mat-icon class="action-icon">check_circle_outline</mat-icon>
+                    <li>
+                      <mat-icon class="action-icon" color="primary">check_circle_outline</mat-icon>
                       {{ action }}
                     </li>
                   }
@@ -110,12 +110,12 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
             </mat-accordion>
 
             <!-- Generated Time -->
-            <div class="generated-info mt-4 text-sm text-gray-500 text-center">
+            <div class="generated-info">
               Analysis generated {{ getRelativeTime(riskSummary()!.generatedAt) }}
             </div>
           </div>
         } @else {
-          <div class="text-center py-4">
+          <div class="text-center">
             <button mat-raised-button color="primary" (click)="loadAiSummary()">
               <mat-icon>psychology</mat-icon>
               Generate AI Risk Analysis
@@ -146,104 +146,37 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
       gap: 8px;
     }
 
-    .py-8 {
-      padding-top: 32px;
-      padding-bottom: 32px;
-    }
-
-    .py-4 {
-      padding-top: 16px;
-      padding-bottom: 16px;
-    }
-
-    .p-4 {
-      padding: 16px;
-    }
-
-    .mb-2 {
-      margin-bottom: 8px;
-    }
-
-    .mb-4 {
-      margin-bottom: 16px;
-    }
-
-    .mt-2 {
-      margin-top: 8px;
-    }
-
-    .mt-4 {
-      margin-top: 16px;
-    }
-
-    .ml-3 {
-      margin-left: 12px;
-    }
-
-    .text-center {
+    .loading-container {
+      padding: 32px 16px;
       text-align: center;
     }
 
-    .text-lg {
-      font-size: 1.125rem;
-    }
-
-    .text-sm {
-      font-size: 0.875rem;
-    }
-
-    .font-semibold {
-      font-weight: 600;
-    }
-
-    .cache-icon {
-      font-size: 18px;
-      color: #666;
+    .loading-container span {
+      margin-left: 12px;
     }
 
     .error-state {
-      border: 1px solid #f87171;
-      border-radius: 8px;
-      background-color: #fef2f2;
+      padding: 16px;
+      text-align: center;
     }
 
     .error-icon {
-      color: #ef4444;
       font-size: 48px;
       width: 48px;
       height: 48px;
+      margin-bottom: 8px;
     }
 
-    .text-red-600 {
-      color: #dc2626;
+    .risk-level-section {
+      margin-bottom: 16px;
     }
 
-    .text-gray-700 {
-      color: #374151;
+    .executive-summary {
+      margin-bottom: 16px;
     }
 
-    .text-gray-500 {
-      color: #6b7280;
-    }
-
-    .risk-critical {
-      background-color: #fef2f2 !important;
-      color: #991b1b !important;
-    }
-
-    .risk-high {
-      background-color: #fef3c7 !important;
-      color: #92400e !important;
-    }
-
-    .risk-medium {
-      background-color: #f0f9ff !important;
-      color: #1e40af !important;
-    }
-
-    .risk-low {
-      background-color: #f0fdf4 !important;
-      color: #166534 !important;
+    .executive-summary h3 {
+      margin-bottom: 8px;
     }
 
     .action-list {
@@ -251,13 +184,35 @@ import { AiRiskSummary, RiskLevel } from '../../../../core/models';
       padding: 0;
     }
 
+    .action-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
     .action-icon {
-      color: #16a34a;
       font-size: 20px;
       width: 20px;
       height: 20px;
       flex-shrink: 0;
       margin-top: 2px;
+    }
+
+    .generated-info {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 0.875rem;
+      opacity: 0.7;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .cache-icon {
+      font-size: 18px;
+      opacity: 0.7;
     }
 
     mat-expansion-panel {
@@ -302,20 +257,7 @@ export class AiRiskSummaryComponent implements OnInit {
     });
   }
 
-  getRiskLevelClass(riskLevel: RiskLevel): string {
-    switch (riskLevel) {
-      case RiskLevel.Critical:
-        return 'risk-critical';
-      case RiskLevel.High:
-        return 'risk-high';
-      case RiskLevel.Medium:
-        return 'risk-medium';
-      case RiskLevel.Low:
-        return 'risk-low';
-      default:
-        return 'risk-medium';
-    }
-  }
+
 
   getRiskLevelIcon(riskLevel: RiskLevel): string {
     switch (riskLevel) {
