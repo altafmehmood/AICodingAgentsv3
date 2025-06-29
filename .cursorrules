@@ -1,0 +1,495 @@
+# Cursor Rules for BreachViewer Angular Application
+
+## 🎯 Project Overview
+This is a modern Angular 20+ application for viewing and managing data breach information. The project uses:
+- **Angular Material 20+** for UI components
+- **Standalone components** architecture
+- **Modern responsive design** with glassmorphism effects
+- **Clean architecture** with feature modules
+- **TypeScript strict mode** for type safety
+- **RxJS** for reactive programming
+
+## 📋 Table of Contents
+1. [Code Style and Standards](#code-style-and-standards)
+2. [Git Commit Message Standards](#git-commit-message-standards)
+3. [Project Architecture](#project-architecture)
+4. [UI/UX Guidelines](#uiux-guidelines)
+5. [Performance Guidelines](#performance-guidelines)
+6. [Testing Guidelines](#testing-guidelines)
+7. [Security Guidelines](#security-guidelines)
+8. [Development Workflow](#development-workflow)
+
+## 💻 Code Style and Standards
+
+### Angular Components
+- **MUST** use standalone components with explicit imports
+- **MUST** follow Angular naming conventions: kebab-case for files, PascalCase for classes
+- **SHOULD** use OnPush change detection strategy for performance
+- **MUST** implement proper lifecycle hooks (OnInit, OnDestroy)
+- **MUST** use TypeScript strict mode and proper typing
+- **MUST** implement proper unsubscribe patterns with takeUntil
+
+### Template Structure
+- **PREFER** inline templates for components under 50 lines
+- **MUST** use Angular Material components consistently
+- **MUST** implement proper accessibility attributes (aria-labels, roles, tabindex)
+- **MUST** use structural directives (*ngIf, *ngFor) with trackBy functions for performance
+- **SHOULD** use template-driven forms for simple use cases, reactive forms for complex scenarios
+
+### Styling Guidelines
+- **MUST** use modern CSS with gradients, glassmorphism effects, and smooth animations
+- **MUST** implement responsive design with mobile-first approach
+- **MUST** use CSS Grid and Flexbox for layouts
+- **SHOULD** follow BEM methodology for CSS class naming
+- **MUST** use CSS custom properties for consistent theming
+- **MUST** implement proper hover states and transitions (0.3s cubic-bezier)
+- **MUST** use Inter font family for typography
+
+### TypeScript Best Practices
+- **MUST** use interfaces for all data models
+- **MUST** implement proper error handling with try-catch blocks
+- **MUST** use RxJS operators effectively (map, switchMap, catchError, takeUntil)
+- **SHOULD** use async/await for better readability when appropriate
+- **MUST** use proper typing for all variables, parameters, and return types
+- **SHOULD** use readonly for immutable properties
+
+## 📝 Git Commit Message Standards
+
+### Commit Message Format
+**MUST** use the Conventional Commits specification with detailed descriptions:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+### Commit Types
+- **feat**: New feature for the user
+- **fix**: Bug fix for the user
+- **docs**: Documentation only changes
+- **style**: Changes that do not affect the meaning of the code
+- **refactor**: Code change that neither fixes a bug nor adds a feature
+- **perf**: Code change that improves performance
+- **test**: Adding missing tests or correcting existing tests
+- **chore**: Changes to the build process or auxiliary tools
+- **ci**: Changes to CI configuration files and scripts
+
+### Scope Examples
+- **component**: Changes to specific components (e.g., breach-list, breach-detail)
+- **service**: Changes to services (e.g., breach-api, pdf)
+- **api**: Changes to API integration
+- **ui**: Changes to UI/UX elements
+- **style**: Changes to styling and CSS
+- **test**: Changes to testing files
+- **build**: Changes to build configuration
+- **deps**: Changes to dependencies
+
+### Detailed Commit Message Examples
+
+#### Feature Addition
+```
+feat(component): add breach detail view with modern responsive design
+
+- Implement new BreachDetailComponent with card-based layout
+- Add responsive grid system for statistics display
+- Include data type chips with hover animations
+- Implement back navigation with glassmorphism button
+- Add proper loading states and error handling
+- Ensure accessibility compliance with ARIA labels
+
+Performance: Lazy loading reduces initial bundle by 15%
+Closes #123
+```
+
+#### Bug Fix
+```
+fix(service): resolve memory leak in breach list subscription management
+
+- Add proper takeUntil pattern for all subscriptions
+- Fix unsubscribe logic in component destruction
+- Update error handling to prevent infinite retry loops
+- Add proper cleanup for HTTP requests
+- Implement retry logic with exponential backoff
+
+Memory usage reduced by 30% on navigation
+Fixes #456
+```
+
+#### Performance Improvement
+```
+perf(component): optimize breach table rendering with virtual scrolling
+
+- Implement CDK virtual scrolling for large datasets
+- Add proper trackBy functions for *ngFor loops
+- Optimize change detection with OnPush strategy
+- Implement lazy loading for breach images
+- Add memoization for expensive calculations
+
+Performance improvement: 60% faster rendering for 1000+ items
+Benchmark: Initial load time reduced from 2.3s to 0.9s
+```
+
+### Commit Message Guidelines
+
+#### Subject Line (First Line)
+- **MUST** use imperative mood ("add" not "added" or "adds")
+- **MUST NOT** capitalize the first letter
+- **MUST NOT** end with a dot (.)
+- **MUST** be maximum 72 characters
+- **MUST** be specific about what changed
+
+#### Body
+- **MUST** use imperative mood
+- **MUST** explain what and why vs. how
+- **SHOULD** include technical details when relevant
+- **SHOULD** reference issues and pull requests
+- **MUST** separate paragraphs with blank lines
+
+#### Footer
+- **MUST** reference related issues: "Closes #123", "Fixes #456"
+- **MUST** include breaking changes: "BREAKING CHANGE: ..."
+- **SHOULD** add performance metrics when applicable
+- **SHOULD** include testing notes if relevant
+
+### Branch Naming Convention
+- **feature/**: New features (e.g., `feature/breach-detail-view`)
+- **fix/**: Bug fixes (e.g., `fix/memory-leak-subscriptions`)
+- **refactor/**: Code refactoring (e.g., `refactor/component-architecture`)
+- **style/**: Styling changes (e.g., `style/modern-design-system`)
+- **docs/**: Documentation updates (e.g., `docs/api-documentation`)
+- **test/**: Adding or updating tests (e.g., `test/component-unit-tests`)
+- **chore/**: Maintenance tasks (e.g., `chore/update-dependencies`)
+
+## 🏗️ Project Architecture
+
+### Current Structure
+```
+src/app/
+├── core/                    # Singleton services and models
+│   ├── models/             # Data interfaces and types
+│   ├── services/           # API services and utilities
+│   └── interceptors/       # HTTP interceptors
+├── features/               # Feature modules
+│   └── breach-management/  # Main breach feature
+│       ├── components/     # Feature components
+│       └── services/       # Feature-specific services
+├── shared/                 # Shared components and utilities
+│   ├── components/         # Reusable UI components
+│   └── pipes/             # Custom pipes
+├── layout/                # Layout components
+│   ├── header/            # Application header
+│   └── footer/            # Application footer
+└── app.routes.ts          # Application routing
+```
+
+### Core Module Guidelines
+- **Models**: Define interfaces for all data structures
+- **Services**: API calls, business logic, utilities (singleton)
+- **Guards**: Route protection and authentication
+- **Interceptors**: HTTP request/response handling
+
+### Features Module Guidelines
+- **Components**: Feature-specific components
+- **Services**: Feature-specific business logic
+- **Models**: Feature-specific interfaces
+- **Routing**: Feature routing configuration
+
+### Shared Module Guidelines
+- **Components**: Reusable UI components (loading, error display, date picker)
+- **Pipes**: Custom Angular pipes for data transformation
+- **Directives**: Custom directives for common functionality
+- **Utilities**: Helper functions and constants
+
+## 🎨 UI/UX Guidelines
+
+### Design System
+- **Color Palette**: Purple gradients (#667eea to #764ba2) with modern grays
+- **Typography**: Inter font family with proper weight hierarchy (300-800)
+- **Spacing**: 8px base unit with consistent scale (0.5rem, 1rem, 1.5rem, 2rem)
+- **Border Radius**: 8px (small), 12px (medium), 16px (large), 20px (cards)
+- **Shadows**: Layered shadows with rgba(0,0,0,0.1) for depth
+
+### Responsive Design
+- **Mobile First**: Design for 320px and scale up
+- **Breakpoints**: 
+  - Mobile: < 768px
+  - Tablet: 768px - 1024px
+  - Desktop: > 1024px
+- **Touch Targets**: Minimum 44px for interactive elements
+- **Typography Scale**: Responsive font sizes using clamp()
+
+### Accessibility Requirements
+- **WCAG 2.1 AA** compliance
+- **Color Contrast**: Minimum 4.5:1 for normal text, 3:1 for large text
+- **Keyboard Navigation**: All interactive elements accessible via keyboard
+- **Screen Readers**: Proper ARIA labels and semantic HTML
+- **Focus Management**: Visible focus indicators and logical tab order
+
+### Component Patterns
+- **Loading States**: Skeleton screens for better perceived performance
+- **Error States**: User-friendly error messages with retry actions
+- **Empty States**: Helpful messaging and clear next steps
+- **Interactive States**: Hover, focus, active, and disabled states
+
+## ⚡ Performance Guidelines
+
+### Angular Performance
+- **MUST** use OnPush change detection strategy
+- **MUST** implement proper trackBy functions for *ngFor
+- **SHOULD** lazy load feature modules
+- **MUST** use async pipe for observables
+- **MUST** implement proper unsubscribe patterns
+- **SHOULD** use virtual scrolling for large lists
+
+### CSS Performance
+- **MUST** use CSS transforms for animations (not position changes)
+- **SHOULD** minimize reflows and repaints
+- **SHOULD** use will-change property for optimized animations
+- **MUST** implement proper CSS containment
+- **SHOULD** use CSS custom properties for theming
+
+### Bundle Optimization
+- **SHOULD** implement code splitting
+- **SHOULD** use tree shaking for unused code
+- **SHOULD** optimize images and assets
+- **SHOULD** implement proper caching strategies
+
+## 🧪 Testing Guidelines
+
+### Unit Testing
+- **Target**: 80%+ code coverage
+- **MUST** test all services and components
+- **MUST** use Angular TestBed for component testing
+- **MUST** mock external dependencies
+- **MUST** test error scenarios and edge cases
+- **SHOULD** use Page Object Model for complex components
+
+### E2E Testing
+- **MUST** test critical user journeys
+- **SHOULD** test responsive behavior on different screen sizes
+- **SHOULD** test accessibility features
+- **MUST** test error handling and recovery
+
+### Testing Patterns
+```typescript
+// Component Test Example
+describe('BreachListComponent', () => {
+  let component: BreachListComponent;
+  let fixture: ComponentFixture<BreachListComponent>;
+  let mockBreachService: jasmine.SpyObj<BreachApiService>;
+
+  beforeEach(() => {
+    const spy = jasmine.createSpyObj('BreachApiService', ['getBreaches']);
+    
+    TestBed.configureTestingModule({
+      imports: [BreachListComponent],
+      providers: [{ provide: BreachApiService, useValue: spy }]
+    });
+    
+    fixture = TestBed.createComponent(BreachListComponent);
+    component = fixture.componentInstance;
+    mockBreachService = TestBed.inject(BreachApiService) as jasmine.SpyObj<BreachApiService>;
+  });
+
+  it('should load breaches on init', () => {
+    mockBreachService.getBreaches.and.returnValue(of(mockBreaches));
+    
+    component.ngOnInit();
+    
+    expect(mockBreachService.getBreaches).toHaveBeenCalled();
+    expect(component.breaches).toEqual(mockBreaches);
+  });
+});
+```
+
+## 🔒 Security Guidelines
+
+### Frontend Security
+- **MUST** sanitize all user inputs
+- **MUST** implement proper XSS protection
+- **SHOULD** use Content Security Policy headers
+- **MUST** validate data on both client and server side
+- **SHOULD** implement proper authentication and authorization
+- **MUST** avoid storing sensitive data in localStorage
+
+## 🔧 Development Workflow
+
+### Code Organization
+- **MUST** keep components under 200 lines
+- **MUST** use proper separation of concerns
+- **MUST** implement consistent file naming
+- **MUST** use meaningful variable and function names
+- **SHOULD** add JSDoc comments for complex logic
+
+### Git Workflow
+- **MUST** use descriptive commit messages following Conventional Commits
+- **MUST** create feature branches for new development
+- **MUST** review code before merging
+- **MUST** keep commits atomic and focused
+- **MUST** include detailed commit descriptions for complex changes
+
+### Code Review Checklist
+- [ ] Follows Angular style guide
+- [ ] Implements proper error handling
+- [ ] Includes appropriate tests
+- [ ] Maintains accessibility standards
+- [ ] Optimizes for performance
+- [ ] Uses consistent naming conventions
+- [ ] Includes proper documentation
+
+## 📦 Dependencies
+
+### Core Dependencies (Current)
+- **Angular**: 20.0.0
+- **Angular Material**: 20.0.4
+- **Angular CDK**: 20.0.4
+- **RxJS**: 7.8.0
+- **TypeScript**: 5.8.2
+
+### Development Dependencies
+- **Angular CLI**: 20.0.4
+- **Jasmine/Karma**: For testing
+- **Prettier**: Code formatting (configured)
+
+## 📁 File Naming Conventions
+
+### Components
+```
+component-name.component.ts    # Component class
+component-name.component.html  # Template (if external)
+component-name.component.scss  # Styles (if external)
+component-name.component.spec.ts # Unit tests
+```
+
+### Services
+```
+service-name.service.ts        # Service class
+service-name.service.spec.ts   # Unit tests
+```
+
+### Models
+```
+model-name.interface.ts        # Interface definition
+model-name.model.ts           # Model class (if needed)
+```
+
+## 🔧 Code Examples
+
+### Modern Component Structure
+```typescript
+@Component({
+  selector: 'app-breach-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule
+  ],
+  template: `
+    <div class="breach-list">
+      <table mat-table [dataSource]="breaches$ | async" class="breach-table">
+        <!-- Table content -->
+      </table>
+    </div>
+  `,
+  styles: [`
+    .breach-list {
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .breach-table {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class BreachListComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+  
+  readonly breaches$ = this.breachService.getBreaches().pipe(
+    takeUntil(this.destroy$),
+    catchError(this.handleError.bind(this))
+  );
+
+  constructor(private readonly breachService: BreachApiService) {}
+
+  ngOnInit(): void {
+    // Initialization logic
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private handleError(error: unknown): Observable<Breach[]> {
+    console.error('Error loading breaches:', error);
+    return of([]);
+  }
+}
+```
+
+### Service Structure
+```typescript
+@Injectable({
+  providedIn: 'root'
+})
+export class BreachApiService {
+  private readonly apiUrl = '/api/breaches';
+
+  constructor(private readonly http: HttpClient) {}
+
+  getBreaches(params?: DateRangeParams): Observable<Breach[]> {
+    return this.http.get<Breach[]>(this.apiUrl, { params }).pipe(
+      retry({ count: 3, delay: 1000 }),
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An error occurred';
+    
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Client error: ${error.error.message}`;
+    } else {
+      errorMessage = `Server error: ${error.status} ${error.message}`;
+    }
+    
+    return throwError(() => new Error(errorMessage));
+  }
+}
+```
+
+## 🎯 AI Assistance Guidelines
+
+When working on this project, **ALWAYS**:
+
+1. **Responsive Design**: Consider mobile-first approach with proper breakpoints
+2. **Modern CSS**: Use gradients, glassmorphism, and smooth animations
+3. **Error Handling**: Implement proper error states and loading indicators
+4. **Angular Material**: Follow Material Design patterns consistently
+5. **Accessibility**: Ensure WCAG 2.1 AA compliance
+6. **TypeScript**: Use strict typing and proper interfaces
+7. **RxJS**: Implement proper reactive patterns with takeUntil
+8. **Performance**: Consider OnPush, trackBy, and virtual scrolling
+9. **Architecture**: Follow established project structure
+10. **Testing**: Include unit tests for new components and services
+11. **Commit Messages**: Use detailed Conventional Commits format
+12. **Documentation**: Include JSDoc for complex logic
+
+**NEVER**:
+- Skip accessibility attributes
+- Forget to implement unsubscribe patterns
+- Use any type without proper justification
+- Ignore responsive design requirements
+- Skip error handling
+- Use deprecated Angular features
+
+Remember: Test changes across different screen sizes and ensure the application remains accessible and performant. 
