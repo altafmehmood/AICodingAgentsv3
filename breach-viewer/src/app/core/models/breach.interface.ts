@@ -27,3 +27,21 @@ export interface BreachFilterState {
   loading: boolean;
   error: string | null;
 }
+
+export enum RiskLevel {
+  Low = 1,
+  Medium = 2,
+  High = 3,
+  Critical = 4
+}
+
+export interface AiRiskSummary {
+  breachName: string;
+  riskLevel: RiskLevel;
+  executiveSummary: string;
+  businessImpact: string;
+  recommendedActions: string[];
+  industryContext: string;
+  generatedAt: string;
+  isFromCache: boolean;
+}

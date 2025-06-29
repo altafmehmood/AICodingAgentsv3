@@ -14,7 +14,9 @@
       "Bash(mkdir:*)",
       "Bash(npm run build:*)",
       "Bash(npm run ng lint)",
-      "WebFetch(domain:sageandsill.com)"
+      "WebFetch(domain:sageandsill.com)",
+      "Bash(chmod:*)",
+      "Bash(dotnet build:*)"
     ],
     "deny": []
   }

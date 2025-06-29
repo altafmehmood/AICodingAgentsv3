@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { retry, catchError, delay, mergeMap } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Breach, DateRangeParams } from '../models';
+import { Breach, DateRangeParams, AiRiskSummary } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +45,11 @@ export class BreachApiService {
       params: httpParams,
       responseType: 'blob'
     });
+  }
+
+  getAiRiskSummary(breachName: string): Observable<AiRiskSummary> {
+    return this.http.get<AiRiskSummary>(`${this.baseUrl}/breach/${encodeURIComponent(breachName)}/ai-summary`).pipe(
+      retry({ count: 2, delay: (error, retryCount) => timer(Math.pow(2, retryCount) * 1000) })
+    );
   }
 }

@@ -96,11 +96,13 @@ interface BreachListState {
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let breach" data-label="Actions">
-                  <button mat-button color="primary" (click)="onViewDetails(breach)" 
-                          [attr.aria-label]="'View details for ' + breach.title">
-                    <mat-icon>visibility</mat-icon>
-                    View Details
-                  </button>
+                  <div class="action-buttons">
+                    <button mat-button color="primary" (click)="onViewDetails(breach)" 
+                            [attr.aria-label]="'View details for ' + breach.title">
+                      <mat-icon>visibility</mat-icon>
+                      View Details
+                    </button>
+                  </div>
                 </td>
               </ng-container>
 
@@ -180,6 +182,12 @@ interface BreachListState {
     button[mat-button]:hover {
       background: #0f3319;
       box-shadow: 0 2px 4px rgba(24, 75, 41, 0.2);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     
     /* Responsive Design */

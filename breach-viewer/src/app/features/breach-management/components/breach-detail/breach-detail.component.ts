@@ -15,6 +15,7 @@ import { Breach } from '../../../../core/models';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ErrorDisplayComponent } from '../../../../shared/components/error-display/error-display.component';
 import { HeaderComponent } from '../../../../layout/header/header.component';
+import { AiRiskSummaryComponent } from '../ai-risk-summary/ai-risk-summary.component';
 
 interface BreachDetailState {
   breach: Breach | null;
@@ -35,7 +36,8 @@ interface BreachDetailState {
     MatDividerModule,
     LoadingSpinnerComponent,
     ErrorDisplayComponent,
-    HeaderComponent
+    HeaderComponent,
+    AiRiskSummaryComponent
   ],
   template: `
     <app-header></app-header>
@@ -147,6 +149,9 @@ interface BreachDetailState {
                 </div>
               </mat-card-content>
             </mat-card>
+
+            <!-- AI Risk Summary -->
+            <app-ai-risk-summary [breachName]="state.breach.name"></app-ai-risk-summary>
           </div>
         </ng-container>
       </div>

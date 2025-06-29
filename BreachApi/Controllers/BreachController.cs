@@ -53,4 +53,25 @@ public class BreachController : ControllerBase
         
         return File(pdfBytes, "application/pdf", fileName);
     }
+
+    /// <summary>
+    /// Generates an AI-powered risk summary for a specific data breach
+    /// </summary>
+    /// <param name="breachName">The name of the breach to analyze</param>
+    /// <returns>AI-generated risk analysis and recommendations</returns>
+    [HttpGet("{breachName}/ai-summary")]
+    public async Task<ActionResult<AiRiskSummaryDto>> GetAiRiskSummary(string breachName)
+    {
+        _logger.LogInformation("GetAiRiskSummary endpoint called for breach: {BreachName}", breachName);
+
+        if (string.IsNullOrWhiteSpace(breachName))
+        {
+            return BadRequest("Breach name is required");
+        }
+
+        var query = new GetAiRiskSummaryQuery { BreachName = breachName };
+        var riskSummary = await _mediator.Send(query);
+
+        return Ok(riskSummary);
+    }
 }

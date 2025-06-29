@@ -13,6 +13,20 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IHaveIBeenPwnedService, HaveIBeenPwnedService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
 
+// AI Services
+builder.Services.AddMemoryCache();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("Redis") ?? 
+                          builder.Configuration["Redis:ConnectionString"];
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        options.Configuration = connectionString;
+    }
+});
+builder.Services.AddScoped<IClaudeConfigurationService, ClaudeConfigurationService>();
+builder.Services.AddScoped<IAiRiskAnalysisService, AiRiskAnalysisService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
@@ -34,6 +48,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<RateLimitingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAngularApp");
