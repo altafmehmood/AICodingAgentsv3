@@ -1,6 +1,7 @@
 using BreachApi.Models;
 using BreachApi.Services;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.Text;
@@ -13,6 +14,7 @@ public class AiRiskAnalysisServiceTests
     private readonly IClaudeConfigurationService _configService;
     private readonly IDistributedCache _cache;
     private readonly ILogger<AiRiskAnalysisService> _logger;
+    private readonly IConfiguration _configuration;
     private readonly AiRiskAnalysisService _service;
 
     public AiRiskAnalysisServiceTests()
@@ -20,7 +22,8 @@ public class AiRiskAnalysisServiceTests
         _configService = Substitute.For<IClaudeConfigurationService>();
         _cache = Substitute.For<IDistributedCache>();
         _logger = Substitute.For<ILogger<AiRiskAnalysisService>>();
-        _service = new AiRiskAnalysisService(_configService, _cache, _logger);
+        _configuration = Substitute.For<IConfiguration>();
+        _service = new AiRiskAnalysisService(_configService, _cache, _logger, _configuration);
     }
 
     [Fact]
