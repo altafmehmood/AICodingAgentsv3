@@ -60,7 +60,7 @@ public class EntraIdRedisConnectionFactory : IDisposable
             var baseConnectionString = _configuration["Redis:ConnectionString"] ?? 
                                      throw new InvalidOperationException("Redis connection string not configured");
 
-            // Create configuration options
+            // Create configuration options for Azure Cache for Redis with Entra ID
             var configOptions = new ConfigurationOptions
             {
                 EndPoints = { ExtractEndpointFromConnectionString(baseConnectionString) },
@@ -70,7 +70,7 @@ public class EntraIdRedisConnectionFactory : IDisposable
                 ConnectRetry = _configuration.GetValue<int>("Redis:ConnectRetry", 3),
                 SyncTimeout = _configuration.GetValue<int>("Redis:SyncTimeout", 5000),
                 DefaultDatabase = _configuration.GetValue<int>("Redis:DefaultDatabase", 0),
-                User = "", // Empty user for Entra ID
+                User = "azure", // Azure Cache for Redis requires 'azure' as username for Entra ID
                 Password = token
             };
 
@@ -101,7 +101,8 @@ public class EntraIdRedisConnectionFactory : IDisposable
         {
             _logger.LogDebug("Requesting new Redis token from Entra ID");
             
-            var tokenRequestContext = new TokenRequestContext(new[] { "https://redis.azure.com/.default" });
+            // Use the correct scope for Azure Cache for Redis
+            var tokenRequestContext = new TokenRequestContext(new[] { "https://redis.azure.com/user_impersonation" });
             var tokenResponse = await _credential.GetTokenAsync(tokenRequestContext);
             
             _tokenCache[cacheKey] = (tokenResponse.Token, tokenResponse.ExpiresOn);

@@ -2,6 +2,7 @@ using BreachApi.Models;
 using Flurl.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
+using LoggingTimings;
 
 namespace BreachApi.Services;
 
@@ -32,15 +33,26 @@ public class AiRiskAnalysisService : IAiRiskAnalysisService
 
     public async Task<AiRiskSummaryDto> GenerateRiskSummaryAsync(BreachDto breach)
     {
+        using var timer = _logger.Time("AI Risk Summary Generation for {BreachName}", breach.Name);
+        
         var cacheKey = $"ai_risk_summary_{breach.Name}";
         
         // Try to get from cache first
-        var cachedResult = await GetCachedSummaryAsync(cacheKey);
+        AiRiskSummaryDto? cachedResult;
+        using (var cacheTimer = _logger.Time("Cache lookup for {BreachName}", breach.Name))
+        {
+            cachedResult = await GetCachedSummaryAsync(cacheKey);
+        }
+        
         if (cachedResult != null)
         {
+            _logger.LogInformation("CACHE HIT: AI risk summary for breach: {BreachName} retrieved from cache", breach.Name);
+            
             cachedResult.IsFromCache = true;
             return cachedResult;
         }
+
+        _logger.LogInformation("CACHE MISS: AI risk summary for breach: {BreachName} not found in cache, generating new summary", breach.Name);
 
         try
         {
@@ -51,9 +63,13 @@ public class AiRiskAnalysisService : IAiRiskAnalysisService
             var riskSummary = ParseClaudeResponse(claudeResponse, breach.Name);
             
             // Cache the result
-            await CacheSummaryAsync(cacheKey, riskSummary);
+            using (var cacheSetTimer = _logger.Time("Cache set for {BreachName}", breach.Name))
+            {
+                await CacheSummaryAsync(cacheKey, riskSummary);
+            }
             
             _logger.LogInformation("Successfully generated AI risk summary for breach: {BreachName}", breach.Name);
+            
             return riskSummary;
         }
         catch (Exception ex)
@@ -94,10 +110,16 @@ Focus on actionable insights and measurable business impact. Consider the number
 
     private async Task<ClaudeApiResponse> CallClaudeApiAsync(string prompt)
     {
-        var apiKey = await _configService.GetApiKeyAsync();
-        var apiUrl = _configService.GetApiUrl();
-        var model = _configService.GetModel();
-        var maxTokens = _configService.GetMaxTokens();
+        string apiKey, apiUrl, model;
+        int maxTokens;
+        
+        using (var configTimer = _logger.Time("Claude API Configuration retrieval"))
+        {
+            apiKey = await _configService.GetApiKeyAsync();
+            apiUrl = _configService.GetApiUrl();
+            model = _configService.GetModel();
+            maxTokens = _configService.GetMaxTokens();
+        }
 
         var request = new ClaudeApiRequest
         {
@@ -113,14 +135,29 @@ Focus on actionable insights and measurable business impact. Consider the number
             }
         };
 
-        var response = await apiUrl
-            .WithHeader("x-api-key", apiKey)
-            .WithHeader("Content-Type", "application/json")
-            .WithHeader("anthropic-version", "2023-06-01")
-            .PostJsonAsync(request, cancellationToken: default)
-            .ReceiveJson<ClaudeApiResponse>();
+        _logger.LogInformation("Calling Claude API with model: {Model}, maxTokens: {MaxTokens}", model, maxTokens);
 
-        return response;
+        using var apiTimer = _logger.Time("Claude API call");
+        try
+        {
+            var response = await apiUrl
+                .WithHeader("x-api-key", apiKey)
+                .WithHeader("Content-Type", "application/json")
+                .WithHeader("anthropic-version", "2023-06-01")
+                .PostJsonAsync(request, cancellationToken: default)
+                .ReceiveJson<ClaudeApiResponse>();
+
+            _logger.LogInformation("Claude API call completed successfully, input tokens: {InputTokens}, output tokens: {OutputTokens}", 
+                response.Usage?.InputTokens ?? 0, 
+                response.Usage?.OutputTokens ?? 0);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Claude API call failed");
+            throw;
+        }
     }
 
     private AiRiskSummaryDto ParseClaudeResponse(ClaudeApiResponse response, string breachName)
@@ -179,7 +216,13 @@ Focus on actionable insights and measurable business impact. Consider the number
             var cachedData = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cachedData))
             {
-                return JsonSerializer.Deserialize<AiRiskSummaryDto>(cachedData, _jsonOptions);
+                using var deserializeTimer = _logger.Time("Cache data deserialization for {CacheKey}", cacheKey);
+                var result = JsonSerializer.Deserialize<AiRiskSummaryDto>(cachedData, _jsonOptions);
+                
+                _logger.LogDebug("Cache data deserialized for key: {CacheKey}, data size: {DataSize} bytes", 
+                    cacheKey, cachedData.Length);
+                
+                return result;
             }
         }
         catch (Exception ex)
@@ -195,17 +238,36 @@ Focus on actionable insights and measurable business impact. Consider the number
         try
         {
             var cacheExpirationHours = _configuration.GetValue<int>("Redis:CacheExpirationHours", 24);
+            
+            // Ensure minimum cache expiration time
+            if (cacheExpirationHours <= 0)
+            {
+                cacheExpirationHours = 24; // Default to 24 hours
+                _logger.LogWarning("Invalid cache expiration hours configured, using default of 24 hours");
+            }
+            
+            // Calculate sliding expiration as 1/4 of absolute expiration, with minimum of 1 hour
+            var slidingExpirationHours = Math.Max(1, cacheExpirationHours / 4);
+            
             var cacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(cacheExpirationHours),
-                SlidingExpiration = TimeSpan.FromHours(cacheExpirationHours / 4) // Refresh cache if accessed within 1/4 of expiration time
+                SlidingExpiration = TimeSpan.FromHours(slidingExpirationHours)
             };
             
-            var serializedSummary = JsonSerializer.Serialize(summary, _jsonOptions);
-            await _cache.SetStringAsync(cacheKey, serializedSummary, cacheOptions);
+            string serializedSummary;
+            using (var serializeTimer = _logger.Time("Cache data serialization for {CacheKey}", cacheKey))
+            {
+                serializedSummary = JsonSerializer.Serialize(summary, _jsonOptions);
+            }
             
-            _logger.LogDebug("Cached AI risk summary for key: {CacheKey}, expires in {Hours} hours", 
-                cacheKey, cacheExpirationHours);
+            using (var cacheSetTimer = _logger.Time("Redis cache set for {CacheKey}", cacheKey))
+            {
+                await _cache.SetStringAsync(cacheKey, serializedSummary, cacheOptions);
+            }
+            
+            _logger.LogInformation("CACHE SET: AI risk summary cached for key: {CacheKey}, data size: {DataSize} bytes, expires in {Hours}h (sliding: {SlidingHours}h)", 
+                cacheKey, serializedSummary.Length, cacheExpirationHours, slidingExpirationHours);
         }
         catch (Exception ex)
         {

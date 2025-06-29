@@ -1,7 +1,8 @@
 using BreachApi.Middleware;
 using BreachApi.Services;
-using StackExchange.Redis;
 using Microsoft.Extensions.Caching.Distributed;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,63 +22,49 @@ builder.Services.AddScoped<IPdfService, PdfService>();
 // AI Services
 builder.Services.AddMemoryCache();
 
-// Register Redis configuration service
-builder.Services.AddScoped<IRedisConfigurationService, RedisConfigurationService>();
-
-// Configure Redis Cache
-var redisConnectionString = builder.Configuration["Redis:ConnectionString"];
-var useEntraId = builder.Configuration.GetValue<bool>("Redis:UseEntraId", false);
-
-if (!string.IsNullOrEmpty(redisConnectionString))
+// Configure Azure Cache for Redis using connection string from Key Vault
+try 
 {
-    if (useEntraId)
+    // Get Redis connection string from Key Vault
+    var keyVaultName = builder.Configuration["Claude:KeyVaultName"];
+    if (!string.IsNullOrEmpty(keyVaultName))
     {
-        // Configure Redis with Entra ID authentication
-        builder.Services.AddSingleton<EntraIdRedisConnectionFactory>();
-        builder.Services.AddSingleton<IDistributedCache, EntraIdRedisCache>();
+        var keyVaultUri = new Uri($"https://{keyVaultName}.vault.azure.net/");
+        var credential = new DefaultAzureCredential();
+        var secretClient = new SecretClient(keyVaultUri, credential);
         
-        // Register health check for Entra ID Redis
-        builder.Services.AddTransient<RedisHealthCheck>();
+        var redisConnectionStringSecret = secretClient.GetSecret("redis-connection-string");
+        var redisConnectionString = redisConnectionStringSecret.Value.Value;
         
-        builder.Services.AddHealthChecks()
-            .AddCheck<RedisHealthCheck>("redis-entra", tags: new[] { "cache", "redis", "entra-id" });
-        
-        Console.WriteLine("Configured Azure Cache for Redis with Entra ID authentication");
+        if (!string.IsNullOrEmpty(redisConnectionString))
+        {
+            // Configure standard Redis cache with connection string from Key Vault
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = builder.Configuration["Redis:InstanceName"] ?? "BreachViewerCache";
+            });
+            
+            // Add Redis health check
+            builder.Services.AddHealthChecks()
+                .AddRedis(redisConnectionString, name: "redis", tags: new[] { "cache", "redis" });
+            
+            Console.WriteLine("Configured Azure Cache for Redis using connection string from Key Vault");
+        }
+        else
+        {
+            throw new InvalidOperationException("Redis connection string is empty in Key Vault");
+        }
     }
     else
     {
-        // Standard Redis configuration
-        builder.Services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = redisConnectionString;
-            options.InstanceName = builder.Configuration["Redis:InstanceName"] ?? "BreachViewerCache";
-            
-            // Add connection options from configuration
-            if (int.TryParse(builder.Configuration["Redis:DefaultDatabase"], out var defaultDb))
-            {
-                options.ConfigurationOptions = new ConfigurationOptions
-                {
-                    EndPoints = { redisConnectionString },
-                    DefaultDatabase = defaultDb,
-                    ConnectTimeout = int.Parse(builder.Configuration["Redis:ConnectTimeout"] ?? "5000"),
-                    ConnectRetry = int.Parse(builder.Configuration["Redis:ConnectRetry"] ?? "3"),
-                    SyncTimeout = int.Parse(builder.Configuration["Redis:SyncTimeout"] ?? "5000"),
-                    AbortOnConnectFail = false
-                };
-            }
-        });
-        
-        // Add Redis health check
-        builder.Services.AddHealthChecks()
-            .AddRedis(redisConnectionString, name: "redis", tags: new[] { "cache", "redis" });
-        
-        Console.WriteLine($"Configured Azure Cache for Redis with connection string: {redisConnectionString.Split(',')[0]}...");
+        throw new InvalidOperationException("Key Vault name not configured");
     }
 }
-else
+catch (Exception ex)
 {
-    // Fallback to in-memory cache if Redis is not configured
-    Console.WriteLine("Redis connection string not found. Using in-memory distributed cache as fallback.");
+    Console.WriteLine($"Failed to configure Redis from Key Vault: {ex.Message}");
+    Console.WriteLine("Using in-memory distributed cache as fallback.");
     builder.Services.AddDistributedMemoryCache();
 }
 

@@ -1,6 +1,7 @@
 using BreachApi.Models;
 using HandlebarsDotNet;
 using PuppeteerSharp;
+using LoggingTimings;
 
 namespace BreachApi.Services;
 
@@ -17,13 +18,29 @@ public class PdfService : IPdfService
 
     public async Task<byte[]> GeneratePdfAsync(IEnumerable<BreachDto> breaches)
     {
+        using var timer = _logger.Time("PDF Generation for {Count} breaches", breaches.Count());
+        
         try
         {
             _logger.LogInformation("Generating PDF for {Count} breaches", breaches.Count());
 
-            var template = await GetTemplateAsync();
-            var html = GenerateHtml(template, breaches);
-            var pdf = await GeneratePdfFromHtmlAsync(html);
+            string template;
+            using (var templateTimer = _logger.Time("Template loading"))
+            {
+                template = await GetTemplateAsync();
+            }
+            
+            string html;
+            using (var htmlTimer = _logger.Time("HTML generation from template"))
+            {
+                html = GenerateHtml(template, breaches);
+            }
+            
+            byte[] pdf;
+            using (var pdfTimer = _logger.Time("PDF generation from HTML"))
+            {
+                pdf = await GeneratePdfFromHtmlAsync(html);
+            }
 
             _logger.LogInformation("Successfully generated PDF of {Size} bytes", pdf.Length);
             
@@ -77,31 +94,45 @@ public class PdfService : IPdfService
 
     private async Task<byte[]> GeneratePdfFromHtmlAsync(string html)
     {
-        await new BrowserFetcher().DownloadAsync();
-        
-        await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        using (var browserSetupTimer = _logger.Time("Browser setup and download"))
         {
-            Headless = true,
-            Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
-        });
-
-        await using var page = await browser.NewPageAsync();
-        await page.SetContentAsync(html);
+            await new BrowserFetcher().DownloadAsync();
+        }
         
-        var pdfBytes = await page.PdfDataAsync(new PdfOptions
+        using (var browserTimer = _logger.Time("Browser launch and PDF generation"))
         {
-            Format = PuppeteerSharp.Media.PaperFormat.A4,
-            PrintBackground = true,
-            MarginOptions = new PuppeteerSharp.Media.MarginOptions
+            await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
-                Top = "20px",
-                Bottom = "20px",
-                Left = "20px",
-                Right = "20px"
-            }
-        });
+                Headless = true,
+                Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
+            });
 
-        return pdfBytes;
+            await using var page = await browser.NewPageAsync();
+            
+            using (var contentTimer = _logger.Time("Page content loading"))
+            {
+                await page.SetContentAsync(html);
+            }
+            
+            byte[] pdfBytes;
+            using (var pdfRenderTimer = _logger.Time("PDF rendering"))
+            {
+                pdfBytes = await page.PdfDataAsync(new PdfOptions
+                {
+                    Format = PuppeteerSharp.Media.PaperFormat.A4,
+                    PrintBackground = true,
+                    MarginOptions = new PuppeteerSharp.Media.MarginOptions
+                    {
+                        Top = "20px",
+                        Bottom = "20px",
+                        Left = "20px",
+                        Right = "20px"
+                    }
+                });
+            }
+
+            return pdfBytes;
+        }
     }
 
     private static string GetDefaultTemplate()

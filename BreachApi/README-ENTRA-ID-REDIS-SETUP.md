@@ -1,4 +1,4 @@
-cl# Azure Cache for Redis with Entra ID - Setup Guide
+cldot# Azure Cache for Redis with Entra ID - Setup Guide
 
 ## ✅ **Fully Implemented** 
 
