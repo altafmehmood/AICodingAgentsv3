@@ -116,86 +116,37 @@ interface BreachListState {
   `,
   styles: [`
     .container {
-      min-height: 100vh;
-      background: #fefefe;
-      padding: 2rem 0;
+      padding: 16px;
     }
     
     .content {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 2rem;
     }
     
     .breach-table-container {
-      margin-top: 2rem;
-      background: #ffffff;
-      border-radius: 2px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-      border: 1px solid #f0f0f0;
-      overflow: hidden;
+      margin-top: 16px;
     }
     
     .breach-table {
       width: 100%;
-      border-collapse: collapse;
     }
     
     .clickable-row {
       cursor: pointer;
-      transition: background-color 0.2s ease;
-      border-bottom: 1px solid #f5f5f5;
-    }
-    
-    .clickable-row:hover {
-      background-color: #fafafa;
-    }
-    
-    .clickable-row:last-child {
-      border-bottom: none;
     }
     
     .no-results {
       text-align: center;
-      padding: 4rem 2rem;
-      background: #ffffff;
-      border: 1px solid #f0f0f0;
-      border-radius: 2px;
-    }
-    
-    .no-results h3 {
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-      font-weight: 500;
-      font-family: 'Playfair Display', serif;
-      color: #2c2c2c;
-    }
-    
-    .no-results p {
-      font-size: 1rem;
-      color: #666666;
-      font-family: 'Inter', sans-serif;
-      line-height: 1.7;
+      padding: 32px 16px;
     }
     
     .verified {
-      color: #184B29;
+      color: #4caf50;
     }
     
     .unverified {
-      color: #cc0000;
-    }
-    
-    mat-header-cell {
-      font-weight: 600;
-      color: #2c2c2c;
-      background: #fafafa;
-      padding: 1rem;
-      font-size: 13px;
-      text-transform: none;
-      letter-spacing: 0.02em;
-      border-bottom: 1px solid #e0e0e0;
-      font-family: 'Inter', sans-serif;
+      color: #f44336;
     }
     
     mat-cell {

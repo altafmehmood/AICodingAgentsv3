@@ -53,7 +53,7 @@ interface BreachDetailState {
           
           <div *ngIf="!state.loading && !state.error && state.breach" class="breach-detail">
             <div class="header">
-              <button mat-button (click)="goBack()" class="back-button">
+              <button mat-stroked-button (click)="goBack()">
                 <mat-icon>arrow_back</mat-icon>
                 Back to Breaches
               </button>
@@ -154,9 +154,7 @@ interface BreachDetailState {
   `,
   styles: [`
     .container {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      padding: 1rem;
+      padding: 16px;
     }
     
     .content {
@@ -165,46 +163,18 @@ interface BreachDetailState {
     }
     
     .header {
-      margin-bottom: 2rem;
-    }
-    
-    .back-button {
-      color: #0f172a;
-      background: white;
-      border-radius: 6px;
-      padding: 0.75rem 1.5rem;
-      border: 1px solid #e2e8f0;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .back-button:hover {
-      background: #f8fafc;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-color: #cbd5e1;
-    }
-    
-    .breach-card {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
     }
     
     .breach-avatar {
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      background: #f5f5f5;
     }
     
     .breach-avatar img {
@@ -213,296 +183,113 @@ interface BreachDetailState {
       object-fit: cover;
     }
     
-    .breach-avatar mat-icon {
-      font-size: 40px;
-      color: #0f172a;
-    }
-    
     .breach-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
-      padding: 1.5rem;
-      background: #f8fafc;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      gap: 16px;
+      margin: 16px 0;
     }
     
     .stat {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-      padding: 1.25rem;
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      border: 1px solid #f1f5f9;
-      transition: all 0.2s ease;
-    }
-    
-    .stat:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      gap: 8px;
+      padding: 16px;
     }
     
     .label {
-      font-weight: 600;
-      color: #64748b;
+      font-weight: 500;
       font-size: 0.875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      opacity: 0.7;
     }
     
     .value {
       font-size: 1.25rem;
-      color: #1e293b;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-weight: 600;
+      gap: 8px;
     }
     
     .breach-description {
-      margin: 2rem 0;
-      padding: 0 2rem;
+      margin: 16px 0;
     }
     
     .breach-description h3 {
-      margin-bottom: 1rem;
-      color: #1e293b;
-      font-size: 1.5rem;
-      font-weight: 700;
-      position: relative;
-    }
-    
-    .breach-description h3::after {
-      content: '';
-      position: absolute;
-      bottom: -0.5rem;
-      left: 0;
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      border-radius: 2px;
-    }
-    
-    .breach-description p {
-      line-height: 1.8;
-      color: #475569;
-      font-size: 1.1rem;
-      margin: 0;
+      margin-bottom: 16px;
     }
     
     .data-classes {
-      margin: 2rem 0;
-      padding: 0 2rem;
+      margin: 16px 0;
     }
     
     .data-classes h3 {
-      margin-bottom: 1.5rem;
-      color: #1e293b;
-      font-size: 1.5rem;
-      font-weight: 700;
-      position: relative;
-    }
-    
-    .data-classes h3::after {
-      content: '';
-      position: absolute;
-      bottom: -0.5rem;
-      left: 0;
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-      border-radius: 2px;
+      margin-bottom: 16px;
     }
     
     .chips-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    
-    .chips-container mat-chip {
-      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-      color: #dc2626;
-      font-weight: 600;
-      border: 1px solid #fecaca;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .chips-container mat-chip:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
+      gap: 8px;
     }
     
     .breach-flags {
-      margin: 2rem 0;
-      padding: 0 2rem;
+      margin: 16px 0;
     }
     
     .breach-flags h3 {
-      margin-bottom: 1.5rem;
-      color: #1e293b;
-      font-size: 1.5rem;
-      font-weight: 700;
-      position: relative;
-    }
-    
-    .breach-flags h3::after {
-      content: '';
-      position: absolute;
-      bottom: -0.5rem;
-      left: 0;
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      border-radius: 2px;
+      margin-bottom: 16px;
     }
     
     .flags-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
+      gap: 8px;
     }
     
     .flag {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 1rem;
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-      border-radius: 12px;
-      border-left: 4px solid #f59e0b;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
-    }
-    
-    .flag:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.2);
-    }
-    
-    .flag mat-icon {
-      color: #d97706;
-      font-size: 1.5rem;
-    }
-    
-    .flag span {
-      font-weight: 600;
-      color: #92400e;
+      gap: 8px;
+      padding: 16px;
     }
     
     .breach-dates {
-      margin: 2rem 0;
-      padding: 0 2rem 2rem;
+      margin: 16px 0;
     }
     
     .breach-dates h3 {
-      margin-bottom: 1.5rem;
-      color: #1e293b;
-      font-size: 1.5rem;
-      font-weight: 700;
-      position: relative;
-    }
-    
-    .breach-dates h3::after {
-      content: '';
-      position: absolute;
-      bottom: -0.5rem;
-      left: 0;
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      border-radius: 2px;
+      margin-bottom: 16px;
     }
     
     .date-info {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid #bbf7d0;
+      gap: 8px;
     }
     
     .date-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-    }
-    
-    .date-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    }
-    
-    .date-item .label {
-      font-weight: 600;
-      color: #374151;
-    }
-    
-    .date-item .value {
-      font-weight: 600;
-      color: #059669;
+      padding: 16px;
     }
     
     .verified {
-      color: #059669;
+      color: #4caf50;
     }
     
     .unverified {
-      color: #dc2626;
+      color: #f44336;
     }
     
-    /* Responsive Design */
     @media (max-width: 768px) {
       .container {
-        padding: 0.5rem;
-      }
-      
-      .content {
-        padding: 0;
-      }
-      
-      .breach-card {
-        border-radius: 16px;
-        margin: 0 0.5rem;
+        padding: 8px;
       }
       
       .breach-stats {
         grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 1rem;
-        margin: 1.5rem 0;
-      }
-      
-      .stat {
-        padding: 1rem;
-      }
-      
-      .breach-description,
-      .data-classes,
-      .breach-flags,
-      .breach-dates {
-        padding: 0 1rem;
-        margin: 1.5rem 0;
-      }
-      
-      .breach-description h3,
-      .data-classes h3,
-      .breach-flags h3,
-      .breach-dates h3 {
-        font-size: 1.25rem;
+        gap: 8px;
       }
       
       .flags-grid {
@@ -512,52 +299,7 @@ interface BreachDetailState {
       .date-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.5rem;
-      }
-      
-      .chips-container {
-        gap: 0.5rem;
-      }
-      
-      .chips-container mat-chip {
-        font-size: 0.875rem;
-        padding: 0.375rem 0.75rem;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .container {
-        padding: 0.25rem;
-      }
-      
-      .breach-card {
-        border-radius: 12px;
-        margin: 0 0.25rem;
-      }
-      
-      .breach-avatar {
-        width: 60px;
-        height: 60px;
-      }
-      
-      .breach-avatar mat-icon {
-        font-size: 30px;
-      }
-      
-      .breach-stats {
-        padding: 0.75rem;
-      }
-      
-      .stat {
-        padding: 0.75rem;
-      }
-      
-      .value {
-        font-size: 1.1rem;
-      }
-      
-      .breach-description p {
-        font-size: 1rem;
+        gap: 8px;
       }
     }
   `]

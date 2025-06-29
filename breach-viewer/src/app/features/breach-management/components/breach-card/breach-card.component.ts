@@ -84,13 +84,7 @@ import { DecimalPipe } from '@angular/common';
   `,
   styles: [`
     .breach-card {
-      margin: 1rem;
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
-    
-    .breach-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      margin: 16px;
     }
     
     .breach-card.sensitive {
@@ -111,10 +105,6 @@ import { DecimalPipe } from '@angular/common';
       background-color: #f5f5f5;
     }
     
-    .breach-avatar mat-icon {
-      color: #666;
-    }
-    
     .breach-avatar mat-icon.verified {
       color: #4caf50;
     }
@@ -126,32 +116,24 @@ import { DecimalPipe } from '@angular/common';
     .breach-info {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 16px;
     }
     
     .info-row {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .info-icon {
-      font-size: 1rem;
-      width: 1rem;
-      height: 1rem;
-      color: #666;
+      gap: 8px;
     }
     
     .status-badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 8px;
     }
     
     .data-classes h4 {
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 8px 0;
       font-size: 0.875rem;
-      color: #666;
     }
     
     mat-chip.verified {
@@ -179,14 +161,10 @@ import { DecimalPipe } from '@angular/common';
       height: 24px;
     }
     
-    mat-card-actions {
-      padding: 0 16px 16px;
-    }
-    
     mat-card-actions button {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 4px;
     }
   `]
 })
