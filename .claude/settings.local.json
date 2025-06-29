@@ -12,7 +12,9 @@
       "Bash(npx @angular/cli@latest new:*)",
       "Bash(npm install:*)",
       "Bash(mkdir:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run ng lint)",
+      "WebFetch(domain:sageandsill.com)"
     ],
     "deny": []
   }

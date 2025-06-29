@@ -117,22 +117,23 @@ interface BreachListState {
   styles: [`
     .container {
       min-height: 100vh;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      padding: 1rem;
+      background: #fefefe;
+      padding: 2rem 0;
     }
     
     .content {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
+      padding: 0 2rem;
     }
     
     .breach-table-container {
       margin-top: 2rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: #ffffff;
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0f0f0;
       overflow: hidden;
-      border: 1px solid #e2e8f0;
     }
     
     .breach-table {
@@ -142,14 +143,12 @@ interface BreachListState {
     
     .clickable-row {
       cursor: pointer;
-      transition: all 0.2s ease;
-      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.2s ease;
+      border-bottom: 1px solid #f5f5f5;
     }
     
     .clickable-row:hover {
-      background: #f8fafc;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      background-color: #fafafa;
     }
     
     .clickable-row:last-child {
@@ -159,45 +158,53 @@ interface BreachListState {
     .no-results {
       text-align: center;
       padding: 4rem 2rem;
-      color: #666;
+      background: #ffffff;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
     }
     
     .no-results h3 {
       margin-bottom: 1rem;
       font-size: 1.5rem;
-      font-weight: 600;
-      color: #333;
+      font-weight: 500;
+      font-family: 'Playfair Display', serif;
+      color: #2c2c2c;
     }
     
     .no-results p {
-      font-size: 1.1rem;
-      color: #888;
+      font-size: 1rem;
+      color: #666666;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.7;
     }
     
     .verified {
-      color: #059669;
+      color: #184B29;
     }
     
     .unverified {
-      color: #dc2626;
+      color: #cc0000;
     }
     
     mat-header-cell {
       font-weight: 600;
-      color: #475569;
-      background: #f8fafc;
-      padding: 1.25rem 1rem;
-      font-size: 0.875rem;
+      color: #2c2c2c;
+      background: #fafafa;
+      padding: 1rem;
+      font-size: 13px;
       text-transform: none;
-      letter-spacing: 0.01em;
-      border-bottom: 1px solid #e2e8f0;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid #e0e0e0;
+      font-family: 'Inter', sans-serif;
     }
     
     mat-cell {
-      padding: 1.25rem 1rem;
-      font-size: 0.95rem;
-      color: #374151;
+      padding: 1rem;
+      font-size: 14px;
+      color: #666666;
       vertical-align: middle;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
     }
     
     mat-icon {
@@ -207,19 +214,21 @@ interface BreachListState {
     }
     
     button[mat-button] {
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
+      border-radius: 2px;
+      padding: 8px 16px;
       font-weight: 500;
       transition: all 0.2s ease;
-      background: #0f172a;
+      background: #184B29;
       color: white;
       border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.02em;
     }
     
     button[mat-button]:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
-      background: #1e293b;
+      background: #0f3319;
+      box-shadow: 0 2px 4px rgba(24, 75, 41, 0.2);
     }
     
     /* Responsive Design */

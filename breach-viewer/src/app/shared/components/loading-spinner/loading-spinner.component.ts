@@ -7,7 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [MatProgressSpinnerModule],
   template: `
     <div class="loading-container">
-      <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+      <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
       <p class="loading-text">Loading breaches...</p>
     </div>
   `,
@@ -18,17 +18,20 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       align-items: center;
       justify-content: center;
       padding: 3rem 2rem;
-      background: white;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      background: #ffffff;
+      border-radius: 2px;
+      border: 1px solid #f0f0f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      margin: 2rem;
     }
     
     .loading-text {
       margin-top: 1.5rem;
-      color: #64748b;
-      font-size: 0.9rem;
+      font-size: 14px;
       font-weight: 500;
+      color: #666666;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.02em;
     }
   `]
 })

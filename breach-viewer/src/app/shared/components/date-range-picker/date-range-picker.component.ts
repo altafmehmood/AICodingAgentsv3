@@ -55,47 +55,67 @@ import { DateRangeParams } from '../../../core/models';
   `,
   styles: [`
     .filter-card {
-      margin-bottom: 1rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      margin-bottom: 2rem;
+      background: #ffffff;
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0f0f0;
+    }
+    
+    .filter-card mat-card-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      font-family: 'Playfair Display', serif;
+      color: #2c2c2c;
+      margin-bottom: 0.5rem;
     }
     
     .date-range-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
     }
     
     .button-group {
       display: flex;
       gap: 1rem;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
     }
     
     .button-group button[mat-raised-button] {
-      background: #0f172a;
+      background: #184B29;
       color: white;
-      border-radius: 6px;
+      border-radius: 2px;
       font-weight: 500;
       transition: all 0.2s ease;
+      padding: 12px 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.02em;
     }
     
     .button-group button[mat-raised-button]:hover {
-      background: #1e293b;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+      background: #0f3319;
+      box-shadow: 0 2px 4px rgba(24, 75, 41, 0.2);
     }
     
     .button-group button[mat-button] {
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
+      color: #666666;
+      border: 1px solid #e0e0e0;
+      border-radius: 2px;
       transition: all 0.2s ease;
+      background: #ffffff;
+      padding: 12px 24px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.02em;
     }
     
     .button-group button[mat-button]:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
+      background: #fafafa;
+      border-color: #184B29;
+      color: #184B29;
     }
     
     @media (min-width: 768px) {
@@ -108,6 +128,14 @@ import { DateRangeParams } from '../../../core/models';
         margin-top: 0;
         align-items: flex-end;
       }
+    }
+    
+    mat-form-field {
+      border-radius: 12px;
+    }
+    
+    mat-form-field .mat-mdc-form-field-subscript-wrapper {
+      margin-top: 0.5rem;
     }
   `]
 })
